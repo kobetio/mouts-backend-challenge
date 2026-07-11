@@ -363,3 +363,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 .idea
+
+# Internal challenge execution guide (not part of the deliverable)
+Technical Challenge Execution Manual - OMNIA.md
+PROJECT.md
+ROADMAP.md
