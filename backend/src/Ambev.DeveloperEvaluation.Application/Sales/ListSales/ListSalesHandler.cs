@@ -38,6 +38,8 @@ public class ListSalesHandler : IRequestHandler<ListSalesCommand, ListSalesResul
             OrderBy = request.OrderBy,
             CustomerId = request.CustomerId,
             BranchId = request.BranchId,
+            CustomerName = request.CustomerName,
+            BranchName = request.BranchName,
             IsCancelled = request.IsCancelled,
             MinTotalAmount = request.MinTotalAmount,
             MaxTotalAmount = request.MaxTotalAmount,

@@ -35,6 +35,18 @@ public class ListSalesCommand : IRequest<ListSalesResult>
     public Guid? BranchId { get; set; }
 
     /// <summary>
+    /// Filters results by customer name. Supports the "*" wildcard before/after the value
+    /// for partial matches (e.g. "John*"), per §3.7.
+    /// </summary>
+    public string? CustomerName { get; set; }
+
+    /// <summary>
+    /// Filters results by branch name. Supports the "*" wildcard before/after the value
+    /// for partial matches, per §3.7.
+    /// </summary>
+    public string? BranchName { get; set; }
+
+    /// <summary>
     /// Filters results by cancellation status.
     /// </summary>
     public bool? IsCancelled { get; set; }

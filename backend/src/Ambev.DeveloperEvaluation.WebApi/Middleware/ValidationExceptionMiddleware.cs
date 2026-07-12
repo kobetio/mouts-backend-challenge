@@ -1,50 +1,84 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
-using Ambev.DeveloperEvaluation.WebApi.Common;
+﻿using Ambev.DeveloperEvaluation.WebApi.Common;
 using FluentValidation;
 using System.Text.Json;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Middleware
+namespace Ambev.DeveloperEvaluation.WebApi.Middleware;
+
+/// <summary>
+/// Global exception-handling middleware. Catches exceptions raised by MediatR handlers (and any
+/// other downstream code) and maps them to the standard <see cref="ErrorResponse"/> envelope
+/// required by the project's error-handling conventions (§3.8).
+/// </summary>
+public class ValidationExceptionMiddleware
 {
-    public class ValidationExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        private readonly RequestDelegate _next;
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
-        public ValidationExceptionMiddleware(RequestDelegate next)
+    public ValidationExceptionMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            _next = next;
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (ValidationException ex)
         {
-            try
+            await WriteErrorAsync(context, StatusCodes.Status400BadRequest, new ErrorResponse
             {
-                await _next(context);
-            }
-            catch (ValidationException ex)
-            {
-                await HandleValidationExceptionAsync(context, ex);
-            }
+                Type = "ValidationError",
+                Error = "Validation failed",
+                Detail = string.Join("; ", ex.Errors.Select(e => e.ErrorMessage))
+            });
         }
-
-        private static Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
+        catch (DomainException ex)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-            var response = new ApiResponse
+            await WriteErrorAsync(context, StatusCodes.Status400BadRequest, new ErrorResponse
             {
-                Success = false,
-                Message = "Validation Failed",
-                Errors = exception.Errors
-                    .Select(error => (ValidationErrorDetail)error)
-            };
-
-            var jsonOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
-            return context.Response.WriteAsync(JsonSerializer.Serialize(response, jsonOptions));
+                Type = "ValidationError",
+                Error = "Business rule violation",
+                Detail = ex.Message
+            });
         }
+        catch (KeyNotFoundException ex)
+        {
+            await WriteErrorAsync(context, StatusCodes.Status404NotFound, new ErrorResponse
+            {
+                Type = "ResourceNotFound",
+                Error = "Resource not found",
+                Detail = ex.Message
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            await WriteErrorAsync(context, StatusCodes.Status409Conflict, new ErrorResponse
+            {
+                Type = "Conflict",
+                Error = "Operation not allowed",
+                Detail = ex.Message
+            });
+        }
+        catch (Exception)
+        {
+            await WriteErrorAsync(context, StatusCodes.Status500InternalServerError, new ErrorResponse
+            {
+                Type = "InternalServerError",
+                Error = "An unexpected error occurred",
+                Detail = "An internal server error occurred. Please try again later."
+            });
+        }
+    }
+
+    private static Task WriteErrorAsync(HttpContext context, int statusCode, ErrorResponse response)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
+        return context.Response.WriteAsync(JsonSerializer.Serialize(response, JsonOptions));
     }
 }

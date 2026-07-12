@@ -76,6 +76,18 @@ public class SaleRepository : ISaleRepository
             query = query.Where(s => s.Branch.Id == filter.BranchId.Value);
         }
 
+        if (!string.IsNullOrWhiteSpace(filter.CustomerName))
+        {
+            var pattern = ToLikePattern(filter.CustomerName);
+            query = query.Where(s => EF.Functions.ILike(s.Customer.Name, pattern));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.BranchName))
+        {
+            var pattern = ToLikePattern(filter.BranchName);
+            query = query.Where(s => EF.Functions.ILike(s.Branch.Name, pattern));
+        }
+
         if (filter.IsCancelled.HasValue)
         {
             var status = filter.IsCancelled.Value
@@ -169,4 +181,10 @@ public class SaleRepository : ISaleRepository
 
         return ordered ?? query.OrderByDescending(s => s.SaleDate);
     }
+
+    /// <summary>
+    /// Translates the "*" wildcard convention (§3.7) into a SQL ILIKE pattern ("%"). A value
+    /// with no wildcard is treated as an exact (case-insensitive) match.
+    /// </summary>
+    private static string ToLikePattern(string value) => value.Contains('*') ? value.Replace('*', '%') : value;
 }
