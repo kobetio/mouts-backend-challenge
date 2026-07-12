@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Common.Caching;
 using Ambev.DeveloperEvaluation.Common.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
@@ -14,12 +15,18 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Sale
     private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
     private readonly IEventPublisher _eventPublisher;
+    private readonly ICacheService _cacheService;
 
-    public CancelSaleItemHandler(ISaleRepository saleRepository, IMapper mapper, IEventPublisher eventPublisher)
+    public CancelSaleItemHandler(
+        ISaleRepository saleRepository,
+        IMapper mapper,
+        IEventPublisher eventPublisher,
+        ICacheService cacheService)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
         _eventPublisher = eventPublisher;
+        _cacheService = cacheService;
     }
 
     /// <summary>
@@ -41,6 +48,7 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Sale
 
         var updatedSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
         await updatedSale.PublishDomainEventsAsync(_eventPublisher, cancellationToken);
+        await _cacheService.InvalidateSalesCachesAsync(updatedSale.Id, cancellationToken);
 
         return _mapper.Map<SaleResult>(updatedSale);
     }
