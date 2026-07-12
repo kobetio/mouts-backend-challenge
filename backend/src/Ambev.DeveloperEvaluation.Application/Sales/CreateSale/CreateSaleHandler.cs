@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Common.Caching;
 using Ambev.DeveloperEvaluation.Common.Events;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
@@ -18,17 +19,20 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, SaleResult>
     private readonly IMapper _mapper;
     private readonly IDiscountPolicy _discountPolicy;
     private readonly IEventPublisher _eventPublisher;
+    private readonly ICacheService _cacheService;
 
     public CreateSaleHandler(
         ISaleRepository saleRepository,
         IMapper mapper,
         IDiscountPolicy discountPolicy,
-        IEventPublisher eventPublisher)
+        IEventPublisher eventPublisher,
+        ICacheService cacheService)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
         _discountPolicy = discountPolicy;
         _eventPublisher = eventPublisher;
+        _cacheService = cacheService;
     }
 
     /// <summary>
@@ -67,6 +71,7 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, SaleResult>
 
         var createdSale = await _saleRepository.CreateAsync(sale, cancellationToken);
         await createdSale.PublishDomainEventsAsync(_eventPublisher, cancellationToken);
+        await _cacheService.InvalidateSalesCachesAsync(createdSale.Id, cancellationToken);
 
         return _mapper.Map<SaleResult>(createdSale);
     }

@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Common.Caching;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MediatR;
@@ -10,10 +11,12 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, DeleteSaleResponse>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly ICacheService _cacheService;
 
-    public DeleteSaleHandler(ISaleRepository saleRepository)
+    public DeleteSaleHandler(ISaleRepository saleRepository, ICacheService cacheService)
     {
         _saleRepository = saleRepository;
+        _cacheService = cacheService;
     }
 
     /// <summary>
@@ -33,6 +36,8 @@ public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, DeleteSaleRe
         {
             throw new KeyNotFoundException($"Sale with ID {request.Id} not found");
         }
+
+        await _cacheService.InvalidateSalesCachesAsync(request.Id, cancellationToken);
 
         return new DeleteSaleResponse { Success = true };
     }
