@@ -1,8 +1,7 @@
 using Ambev.DeveloperEvaluation.Common.Events;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
-using Ambev.DeveloperEvaluation.Domain.Services;
-using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
@@ -49,16 +48,7 @@ public class LoggingEventPublisherTests
 
     private static Sale CreateSampleSale()
     {
-        var sale = Sale.Create(
-            new CustomerReference(Guid.NewGuid(), "Test Customer"),
-            new BranchReference(Guid.NewGuid(), "Test Branch"));
-
-        sale.AddItem(
-            new ProductReference(Guid.NewGuid(), "Test Product"),
-            quantity: 2,
-            unitPrice: 10m,
-            new TieredDiscountPolicy());
-
+        var sale = SaleTestData.GenerateValidSale();
         sale.SaleNumber = 1001;
         return sale;
     }
