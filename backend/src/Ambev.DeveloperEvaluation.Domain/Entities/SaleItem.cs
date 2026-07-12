@@ -1,5 +1,7 @@
+using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Validation;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
@@ -66,5 +68,19 @@ public class SaleItem : BaseEntity
     {
         CreatedAt = DateTime.UtcNow;
         Status = SaleItemStatus.NotCancelled;
+    }
+
+    /// <summary>
+    /// Performs validation of the sale item entity using <see cref="SaleItemValidator"/>.
+    /// </summary>
+    public ValidationResultDetail Validate()
+    {
+        var validator = new SaleItemValidator();
+        var result = validator.Validate(this);
+        return new ValidationResultDetail
+        {
+            IsValid = result.IsValid,
+            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
+        };
     }
 }
