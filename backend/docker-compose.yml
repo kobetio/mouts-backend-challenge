@@ -27,7 +27,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      # Host port 5433 (not 5432) to avoid clashing with a locally installed PostgreSQL
+      # service; the internal container network still uses 5432 (unaffected by this remap).
+      - "5433:5432"
     volumes:
       - ambev_developer_evaluation_pgdata:/var/lib/postgresql/data
     healthcheck:
