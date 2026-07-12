@@ -19,6 +19,19 @@ public class SaleListFilter
 
     public Guid? CustomerId { get; set; }
     public Guid? BranchId { get; set; }
+
+    /// <summary>
+    /// Filters by customer name. Supports the "*" wildcard before/after the value for
+    /// partial matches (e.g. "John*"), per §3.7.
+    /// </summary>
+    public string? CustomerName { get; set; }
+
+    /// <summary>
+    /// Filters by branch name. Supports the "*" wildcard before/after the value for
+    /// partial matches, per §3.7.
+    /// </summary>
+    public string? BranchName { get; set; }
+
     public bool? IsCancelled { get; set; }
     public decimal? MinTotalAmount { get; set; }
     public decimal? MaxTotalAmount { get; set; }

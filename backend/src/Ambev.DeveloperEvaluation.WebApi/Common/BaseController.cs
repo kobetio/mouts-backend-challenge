@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
@@ -22,16 +23,36 @@ public class BaseController : ControllerBase
     protected IActionResult BadRequest(string message) =>
         base.BadRequest(new ApiResponse { Message = message, Success = false });
 
+    protected IActionResult BadRequestError(string type, string error, string detail) =>
+        base.BadRequest(new ErrorResponse { Type = type, Error = error, Detail = detail });
+
+    protected IActionResult BadRequestValidationErrors(IEnumerable<ValidationFailure> errors) =>
+        BadRequestError(
+            "ValidationError",
+            "Validation failed",
+            string.Join("; ", errors.Select(e => e.ErrorMessage)));
+
     protected IActionResult NotFound(string message = "Resource not found") =>
         base.NotFound(new ApiResponse { Message = message, Success = false });
 
+    protected IActionResult NotFoundError(string detail) =>
+        base.NotFound(new ErrorResponse
+        {
+            Type = "ResourceNotFound",
+            Error = "Resource not found",
+            Detail = detail
+        });
+
+    // Calls the framework's ControllerBase.Ok(object) directly (not the Ok<T> helper above) —
+    // PaginatedResponse<T> is already a full response envelope, so wrapping it again in
+    // ApiResponseWithData<T> would double-nest the payload.
     protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList) =>
-            Ok(new PaginatedResponse<T>
+            base.Ok(new PaginatedResponse<T>
             {
                 Data = pagedList,
                 CurrentPage = pagedList.CurrentPage,
                 TotalPages = pagedList.TotalPages,
-                TotalCount = pagedList.TotalCount,
+                TotalItems = pagedList.TotalCount,
                 Success = true
             });
 }
