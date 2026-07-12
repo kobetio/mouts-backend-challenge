@@ -1,0 +1,54 @@
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0.5rem 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.summary-card {
+  margin-bottom: 1.5rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.summary-grid dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 0.25rem;
+}
+
+.summary-grid dd {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.items-section h2 {
+  margin: 0 0 1rem;
+}
+
+.state-message {
+  padding: 2rem;
+  text-align: center;
+}
+
+.state-message.error {
+  color: var(--mat-sys-error);
+}

@@ -1,0 +1,39 @@
+<div class="page-header">
+  <div>
+    <h1>Sales</h1>
+    <p class="subtitle">Browse, filter, and manage sales records.</p>
+  </div>
+  <a mat-flat-button color="primary" routerLink="/sales/new">
+    <mat-icon>add</mat-icon>
+    New sale
+  </a>
+</div>
+
+<app-sale-filters
+  [initialFilters]="filters()"
+  (filtersApply)="onFiltersApply($event)"
+  (filtersReset)="onFiltersReset()"
+/>
+
+@if (loadError()) {
+  <div class="state-message error">{{ loadError() }}</div>
+} @else if (isEmpty) {
+  <div class="state-message empty">
+    <mat-icon>inbox</mat-icon>
+    <p>No sales found. Adjust your filters or create a new sale.</p>
+    <a mat-stroked-button routerLink="/sales/new">Create sale</a>
+  </div>
+} @else {
+  <app-sales-table
+    [sales]="sales()"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [sortActive]="sortActive()"
+    [sortDirection]="sortDirection()"
+    (pageChange)="onPageChange($event)"
+    (sortChange)="onSortChange($event)"
+    (deleteSale)="onDeleteSale($event)"
+    (cancelSale)="onCancelSale($event)"
+  />
+}

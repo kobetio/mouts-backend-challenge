@@ -1,0 +1,69 @@
+@if (loadError()) {
+  <div class="state-message error">{{ loadError() }}</div>
+} @else if (sale(); as current) {
+  <div class="page-header">
+    <div>
+      <a mat-button routerLink="/sales">
+        <mat-icon>arrow_back</mat-icon>
+        Back to list
+      </a>
+      <h1>Sale #{{ current.saleNumber }}</h1>
+      <mat-chip-set>
+        <mat-chip [highlighted]="isCancelled">{{ statusLabel() }}</mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <div class="actions">
+      <a
+        mat-stroked-button
+        [routerLink]="['/sales', current.id, 'edit']"
+        [disabled]="isCancelled"
+      >
+        <mat-icon>edit</mat-icon>
+        Edit
+      </a>
+      <button mat-stroked-button type="button" [disabled]="isCancelled" (click)="onCancelSale()">
+        <mat-icon>cancel</mat-icon>
+        Cancel sale
+      </button>
+      <button mat-flat-button color="warn" type="button" (click)="onDeleteSale()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="summary-card">
+    <mat-card-content>
+      <dl class="summary-grid">
+        <div>
+          <dt>Date</dt>
+          <dd>{{ formatDate(current.saleDate) }}</dd>
+        </div>
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ current.customer.name }}</dd>
+        </div>
+        <div>
+          <dt>Branch</dt>
+          <dd>{{ current.branch.name }}</dd>
+        </div>
+        <div>
+          <dt>Total</dt>
+          <dd>{{ formatCurrency(current.totalAmount) }}</dd>
+        </div>
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <section class="items-section">
+    <h2>Items</h2>
+    <app-sale-items-table
+      [items]="current.items"
+      [saleCancelled]="isCancelled"
+      (cancelItem)="onCancelItem($event)"
+    />
+  </section>
+} @else {
+  <div class="state-message">Loading sale…</div>
+}

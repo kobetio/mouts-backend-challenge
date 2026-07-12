@@ -1,0 +1,99 @@
+<div class="table-container">
+  <table
+    mat-table
+    [dataSource]="sales"
+    matSort
+    [matSortActive]="sortActive"
+    [matSortDirection]="sortDirection"
+    (matSortChange)="onSortChange($event)"
+  >
+    <ng-container matColumnDef="saleNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="saleNumber">#</th>
+      <td mat-cell *matCellDef="let sale">{{ sale.saleNumber }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="saleDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="saleDate">Date</th>
+      <td mat-cell *matCellDef="let sale">{{ formatDate(sale.saleDate) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="customer">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="customerName">Customer</th>
+      <td mat-cell *matCellDef="let sale">{{ sale.customer.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="branch">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="branchName">Branch</th>
+      <td mat-cell *matCellDef="let sale">{{ sale.branch.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="totalAmount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="totalAmount">Total</th>
+      <td mat-cell *matCellDef="let sale">{{ formatCurrency(sale.totalAmount) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let sale">
+        <mat-chip-set>
+          <mat-chip [highlighted]="isCancelled(sale.status)">
+            {{ statusLabel(sale.status) }}
+          </mat-chip>
+        </mat-chip-set>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let sale">
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="View sale"
+          [routerLink]="['/sales', sale.id]"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="Edit sale"
+          [routerLink]="['/sales', sale.id, 'edit']"
+          [disabled]="isCancelled(sale.status)"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="Cancel sale"
+          [disabled]="isCancelled(sale.status)"
+          (click)="cancelSale.emit(sale)"
+        >
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          color="warn"
+          aria-label="Delete sale"
+          (click)="deleteSale.emit(sale)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
+
+<mat-paginator
+  [length]="totalItems"
+  [pageIndex]="pageIndex"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onPageChange($event)"
+  showFirstLastButtons
+/>

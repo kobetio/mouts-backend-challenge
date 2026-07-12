@@ -1,0 +1,11 @@
+@if (loadError()) {
+  <div class="state-message error">{{ loadError() }}</div>
+} @else {
+  <app-sale-form
+    [sale]="sale()"
+    [isEditMode]="isEditMode"
+    [submitting]="submitting()"
+    (formSubmit)="onSubmit($event)"
+    (formCancel)="onCancel()"
+  />
+}

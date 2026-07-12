@@ -1,0 +1,84 @@
+.sale-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-header h1 {
+  margin: 0 0 0.25rem;
+}
+
+.hint {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.875rem;
+}
+
+.section h2 {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)) auto;
+  gap: 0.75rem 1rem;
+  align-items: start;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 0.5rem;
+}
+
+.line-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  padding-top: 0.5rem;
+}
+
+.line-preview .error {
+  color: var(--mat-sys-error);
+}
+
+.form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.sale-total {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .item-row {
+    grid-template-columns: 1fr;
+  }
+}
