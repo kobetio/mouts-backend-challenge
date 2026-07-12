@@ -1,0 +1,8 @@
+.state-message {
+  padding: 2rem;
+  text-align: center;
+}
+
+.state-message.error {
+  color: var(--mat-sys-error);
+}
