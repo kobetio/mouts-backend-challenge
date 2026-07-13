@@ -17,6 +17,13 @@ public class BaseController : ControllerBase
     protected IActionResult Ok<T>(T data) =>
             base.Ok(new ApiResponseWithData<T> { Data = data, Success = true });
 
+    /// <summary>
+    /// Returns a pre-built response envelope as-is (no second wrap). Use when the action
+    /// already constructs <see cref="ApiResponse"/>, <see cref="ApiResponseWithData{T}"/>,
+    /// or <see cref="PaginatedResponse{T}"/>.
+    /// </summary>
+    protected IActionResult OkEnvelope(object response) => new OkObjectResult(response);
+
     protected IActionResult Created<T>(string routeName, object routeValues, T data) =>
         base.CreatedAtRoute(routeName, routeValues, new ApiResponseWithData<T> { Data = data, Success = true });
 
@@ -47,7 +54,7 @@ public class BaseController : ControllerBase
     // PaginatedResponse<T> is already a full response envelope, so wrapping it again in
     // ApiResponseWithData<T> would double-nest the payload.
     protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList) =>
-            base.Ok(new PaginatedResponse<T>
+            OkEnvelope(new PaginatedResponse<T>
             {
                 Data = pagedList,
                 CurrentPage = pagedList.CurrentPage,

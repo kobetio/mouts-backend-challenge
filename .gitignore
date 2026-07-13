@@ -369,6 +369,9 @@ Technical Challenge Execution Manual - OMNIA.md
 PROJECT.md
 ROADMAP.md
 
+# Local manual testing checklist (personal workflow)
+doc/MANUAL_TESTING.md
+
 # Local environment secrets (never commit real .env files)
 **/.env
 !**/.env.example

@@ -22,9 +22,15 @@ public static class SwaggerExtensions
                 Version = "v1",
                 Description =
                     "REST API for managing sales records. Supports CRUD, cancellation " +
-                    "(sale and individual items), paginated/sorted/filtered listing, and " +
-                    "tiered quantity discounts. See the general API conventions (§3.7) for " +
-                    "pagination, sorting, and filtering query parameters."
+                    "(entire sale or individual items), paginated/sorted/filtered listing, and " +
+                    "tiered quantity-based discounts (0% below 4 units, 10% for 4–9, 20% for 10–20; " +
+                    "more than 20 units per product line is rejected).\n\n" +
+                    "**List query parameters** (`GET /api/sales`):\n" +
+                    "- Pagination: `_page` (default 1), `_size` (default 10, max 100)\n" +
+                    "- Sorting: `_order` using response field names (e.g. `saleDate desc, saleNumber asc`)\n" +
+                    "- Filters: `customerName` / `customer`, `branchName` / `branch` (supports `*` wildcard), " +
+                    "`cancelled`, `customerId`, `branchId`, `_minTotalAmount`, `_maxTotalAmount`, `_minDate`, `_maxDate`\n\n" +
+                    "**Errors:** 4xx/5xx responses use `{ type, error, detail }`."
             });
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

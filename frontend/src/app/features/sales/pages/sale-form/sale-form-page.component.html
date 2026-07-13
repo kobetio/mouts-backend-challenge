@@ -1,5 +1,7 @@
 @if (loadError()) {
   <div class="state-message error">{{ loadError() }}</div>
+} @else if (isEditMode && !sale()) {
+  <div class="state-message">Loading sale…</div>
 } @else {
   <app-sale-form
     [sale]="sale()"

@@ -1,11 +1,12 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
-  Output,
-  computed,
+  effect,
   inject,
+  input,
+  output,
+  computed,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -75,18 +76,14 @@ export interface SaleFormSubmitValue {
 })
 export class SaleFormComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  @Input() set sale(value: Sale | null) {
-    if (value) {
-      this.patchFromSale(value);
-    }
-  }
+  readonly sale = input<Sale | null>(null);
+  readonly isEditMode = input(false);
+  readonly submitting = input(false);
 
-  @Input() isEditMode = false;
-  @Input() submitting = false;
-
-  @Output() readonly formSubmit = new EventEmitter<SaleFormSubmitValue>();
-  @Output() readonly formCancel = new EventEmitter<void>();
+  readonly formSubmit = output<SaleFormSubmitValue>();
+  readonly formCancel = output<void>();
 
   readonly form: SaleFormGroup = this.fb.group({
     customerId: this.fb.nonNullable.control('', [Validators.required]),
@@ -94,10 +91,11 @@ export class SaleFormComponent {
     branchId: this.fb.nonNullable.control('', [Validators.required]),
     branchName: this.fb.nonNullable.control('', [Validators.required]),
     saleDate: this.fb.nonNullable.control(this.todayIsoDate(), [Validators.required]),
-    items: this.fb.array<SaleItemFormGroup>([this.createItemGroup()]),
+    items: this.fb.array<SaleItemFormGroup>([]),
   });
 
   private readonly formRevision = signal(0);
+  private readonly patchedSaleId = signal<string | null>(null);
 
   readonly linePreviews = computed(() => {
     this.formRevision();
@@ -126,6 +124,18 @@ export class SaleFormComponent {
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.formRevision.update((value) => value + 1);
     });
+
+    effect(() => {
+      const sale = this.sale();
+      if (sale) {
+        this.applySaleToForm(sale);
+        return;
+      }
+
+      if (!this.isEditMode() && this.items.length === 0) {
+        this.resetCreateForm();
+      }
+    });
   }
 
   get items(): FormArray<SaleItemFormGroup> {
@@ -133,11 +143,11 @@ export class SaleFormComponent {
   }
 
   get pageTitle(): string {
-    return this.isEditMode ? 'Edit sale' : 'Create sale';
+    return this.isEditMode() ? 'Edit sale' : 'Create sale';
   }
 
   get submitLabel(): string {
-    return this.isEditMode ? 'Save changes' : 'Create sale';
+    return this.isEditMode() ? 'Save changes' : 'Create sale';
   }
 
   get isDirty(): boolean {
@@ -155,6 +165,7 @@ export class SaleFormComponent {
   addItem(): void {
     this.items.push(this.createItemGroup());
     this.form.markAsDirty();
+    this.bumpFormRevision();
   }
 
   removeItem(index: number): void {
@@ -164,6 +175,7 @@ export class SaleFormComponent {
 
     this.items.removeAt(index);
     this.form.markAsDirty();
+    this.bumpFormRevision();
   }
 
   onSubmit(): void {
@@ -193,24 +205,30 @@ export class SaleFormComponent {
     this.formCancel.emit();
   }
 
-  private patchFromSale(sale: Sale): void {
-    this.items.clear();
+  trackItemRow(index: number, group: SaleItemFormGroup): string {
+    return group.controls.id.value ?? `row-${index}`;
+  }
 
-    for (const item of sale.items) {
-      this.items.push(
-        this.createItemGroup({
-          id: item.id,
-          productId: item.product.id,
-          productName: item.product.name,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-        }),
-      );
+  private applySaleToForm(sale: Sale): void {
+    if (this.patchedSaleId() === sale.id && this.items.length > 0) {
+      return;
     }
 
-    if (this.items.length === 0) {
-      this.items.push(this.createItemGroup());
+    const itemGroups = (sale.items ?? []).map((item) =>
+      this.createItemGroup({
+        id: item.id,
+        productId: item.product.id,
+        productName: item.product.name,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      }),
+    );
+
+    if (itemGroups.length === 0) {
+      itemGroups.push(this.createItemGroup());
     }
+
+    this.form.setControl('items', this.fb.array(itemGroups));
 
     this.form.patchValue({
       customerId: sale.customer.id,
@@ -221,6 +239,23 @@ export class SaleFormComponent {
     });
 
     this.form.markAsPristine();
+    this.patchedSaleId.set(sale.id);
+    this.bumpFormRevision();
+    this.cdr.detectChanges();
+  }
+
+  private resetCreateForm(): void {
+    this.form.setControl('items', this.fb.array([this.createItemGroup()]));
+    this.form.patchValue({
+      customerId: '',
+      customerName: '',
+      branchId: '',
+      branchName: '',
+      saleDate: this.todayIsoDate(),
+    });
+    this.form.markAsPristine();
+    this.patchedSaleId.set(null);
+    this.bumpFormRevision();
   }
 
   private createItemGroup(initial?: {
@@ -244,6 +279,10 @@ export class SaleFormComponent {
         Validators.min(0.01),
       ]),
     });
+  }
+
+  private bumpFormRevision(): void {
+    this.formRevision.update((value) => value + 1);
   }
 
   private todayIsoDate(): string {
