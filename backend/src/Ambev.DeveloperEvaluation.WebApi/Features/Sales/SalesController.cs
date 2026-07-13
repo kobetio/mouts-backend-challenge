@@ -119,7 +119,7 @@ public class SalesController : BaseController
 
     /// <summary>
     /// Creates a new sale with one or more items. Discount tiers are applied automatically
-    /// based on item quantity (see business rules §2.1).
+    /// based on item quantity (tiered discount rules).
     /// </summary>
     /// <param name="request">The sale creation request body</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -226,7 +226,7 @@ public class SalesController : BaseController
 
     /// <summary>
     /// Cancels an entire sale. The sale remains queryable for audit purposes but is excluded
-    /// from active totals/reports (see business rules §2.3).
+    /// from active totals/reports (cancellation rules).
     /// </summary>
     /// <param name="id">The unique identifier of the sale to cancel</param>
     /// <param name="cancellationToken">Cancellation token</param>

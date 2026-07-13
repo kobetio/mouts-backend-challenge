@@ -3,7 +3,7 @@
 /// <summary>
 /// Envelope for paginated list responses. The paginated payload fields
 /// (<c>totalItems</c>, <c>currentPage</c>, <c>totalPages</c>) match the exact wire format
-/// required by the project's general API conventions (§3.7); the inherited
+/// required by the Sales API list conventions; the inherited
 /// <c>Success</c>/<c>Message</c>/<c>Errors</c> fields are kept on top for consistency with
 /// every other response in this API.
 /// </summary>

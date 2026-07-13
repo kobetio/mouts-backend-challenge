@@ -213,7 +213,7 @@ public class Sale : BaseEntity
 
     /// <summary>
     /// Recalculates <see cref="TotalAmount"/> as the sum of the <see cref="SaleItem.TotalAmount"/>
-    /// of all non-cancelled items, per the project's business rules (§2.1).
+    /// of all non-cancelled items.
     /// </summary>
     public void RecalculateTotal()
     {

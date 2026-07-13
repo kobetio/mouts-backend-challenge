@@ -4,8 +4,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 
 /// <summary>
 /// Command for creating a new sale, following the "External Identities" pattern: the customer,
-/// branch and each item's product are referenced by their external Id plus a denormalized name
-/// (see the project's business rules, §1.2/§3.1).
+/// branch and each item's product are referenced by their external Id plus a denormalized name.
 /// </summary>
 public class CreateSaleCommand : IRequest<SaleResult>
 {

@@ -2,7 +2,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Services;
 
 /// <summary>
 /// Default <see cref="IDiscountPolicy"/> implementation enforcing the quantity-based discount
-/// tiers from the project's business rules (§2.1):
+/// tiers for quantity-based discounts:
 /// <list type="bullet">
 /// <item>Fewer than 4 units: no discount.</item>
 /// <item>4 to 9 units: 10% discount.</item>

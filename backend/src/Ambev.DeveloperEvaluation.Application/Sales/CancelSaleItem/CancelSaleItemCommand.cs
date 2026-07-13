@@ -3,8 +3,7 @@ using MediatR;
 namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 
 /// <summary>
-/// Command for cancelling a single item within a sale. Per the project's business rules
-/// (§2.3), cancellation preserves history: the item remains queryable, but is excluded from
+/// Command for cancelling a single item within a sale. Cancellation preserves history: the item remains queryable, but is excluded from
 /// the sale's active total. Cancelling an already-cancelled item is rejected.
 /// </summary>
 public record CancelSaleItemCommand : IRequest<SaleResult>

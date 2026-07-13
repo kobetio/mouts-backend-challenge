@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
 
 /// <summary>
 /// Parses raw HTTP query-string parameters into a structured <see cref="ListSalesCommand"/>,
-/// implementing the general API conventions (§3.7): <c>_page</c>, <c>_size</c>, <c>_order</c>,
+/// implementing the list API conventions: <c>_page</c>, <c>_size</c>, <c>_order</c>,
 /// field filters, <c>*</c> wildcards, and <c>_min</c>/<c>_max</c> range prefixes.
 /// </summary>
 public static class SaleListQueryParser

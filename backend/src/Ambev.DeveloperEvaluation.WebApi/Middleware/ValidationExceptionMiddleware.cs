@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Middleware;
 /// <summary>
 /// Global exception-handling middleware. Catches exceptions raised by MediatR handlers (and any
 /// other downstream code) and maps them to the standard <see cref="ErrorResponse"/> envelope
-/// required by the project's error-handling conventions (§3.8).
+/// required by the Sales API error-handling conventions.
 /// </summary>
 public class ValidationExceptionMiddleware
 {
