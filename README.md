@@ -183,9 +183,9 @@ Base path: `/api/sales`
 
 | Quantity | Discount       |
 | -------- | -------------- |
-| 1â€“3    | 0%             |
-| 4â€“9    | 10%            |
-| 10â€“20  | 20%            |
+| 1-3      | 0%             |
+| 4-9      | 10%            |
+| 10-20    | 20%            |
 | > 20     | Rejected (400) |
 
 **Error format:** `{ "type", "error", "detail" }`
