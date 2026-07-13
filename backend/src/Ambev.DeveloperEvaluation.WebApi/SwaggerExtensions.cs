@@ -10,7 +10,7 @@ public static class SwaggerExtensions
 {
     /// <summary>
     /// Registers Swagger generation with XML doc comments for every endpoint, parameter,
-    /// request/response schema, and error response (§3.5).
+    /// request/response schema, and error response.
     /// </summary>
     public static IServiceCollection AddSalesApiSwagger(this IServiceCollection services)
     {

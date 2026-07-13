@@ -4,7 +4,7 @@ using System.Globalization;
 namespace Ambev.DeveloperEvaluation.Application.Sales;
 
 /// <summary>
-/// Cache key conventions and TTLs for Sales read-through caching (see PROJECT.md §3.12).
+/// Cache key conventions and TTLs for Sales read-through caching.
 /// </summary>
 public static class SaleCacheKeys
 {

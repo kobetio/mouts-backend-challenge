@@ -4,7 +4,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales;
 
 /// <summary>
 /// Shared cache-invalidation helper invoked by every Sales write handler after a successful
-/// persist (see PROJECT.md §3.12).
+/// persist.
 /// </summary>
 internal static class SaleCacheInvalidationExtensions
 {

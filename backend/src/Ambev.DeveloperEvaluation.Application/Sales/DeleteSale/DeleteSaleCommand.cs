@@ -4,8 +4,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 
 /// <summary>
 /// Command for permanently deleting a sale record. Unlike <c>CancelSale</c> (which preserves
-/// history per §2.3), this removes the row entirely — it exists to complete the "full CRUD"
-/// surface required for the API (§6/Phase 6), not as a business-rule-driven operation.
+/// history), this removes the row entirely — it exists to complete the full CRUD surface,
+/// not as a business-rule-driven operation.
 /// </summary>
 public record DeleteSaleCommand : IRequest<DeleteSaleResponse>
 {

@@ -1,8 +1,7 @@
 # Supplementary Documentation
 
-This folder holds documentation that complements the evaluator-facing root `README.md` (Phase 12):
+This folder holds documentation that complements the root `README.md`:
 
 - **[Postman collection](sales-api.postman_collection.json)** — all Sales API endpoints with success and error scenarios (also importable in Insomnia).
-- Example requests/responses used during manual CRUD validation (creation, retrieval, update, deletion, filters, pagination, sorting, cancellation).
 
-> `MANUAL_TESTING.md` is kept locally (git-ignored) as a personal Phase 11 checklist.
+Only files intended for evaluators belong here. Do not link to git-ignored internal planning or local-only checklists.

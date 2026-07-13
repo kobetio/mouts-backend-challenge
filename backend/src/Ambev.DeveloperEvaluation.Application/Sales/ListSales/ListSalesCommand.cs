@@ -3,9 +3,9 @@ using MediatR;
 namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 
 /// <summary>
-/// Command for retrieving a paginated, sorted, filtered list of sales (§3.7). Translating raw
+/// Command for retrieving a paginated, sorted, filtered list of sales. Translating raw
 /// query-string parameters (<c>_page</c>, <c>_size</c>, <c>_order</c>, field filters) into this
-/// structured shape is the API layer's responsibility (see Phase 6).
+/// structured shape is the API layer's responsibility.
 /// </summary>
 public class ListSalesCommand : IRequest<ListSalesResult>
 {
