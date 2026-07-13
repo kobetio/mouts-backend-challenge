@@ -19,7 +19,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
 /// <summary>
 /// REST API for managing sales records. Supports full CRUD, cancellation (sale and individual
-/// items), and paginated/sorted/filtered listing per the general API conventions (§3.7).
+/// items), and paginated/sorted/filtered listing. See <c>GET /api/sales</c> for query parameters.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -56,6 +56,7 @@ public class SalesController : BaseController
     /// - `_minTotalAmount`, `_maxTotalAmount` — total amount range
     /// - `_minDate`, `_maxDate` — sale date range
     /// </remarks>
+    /// <param name="query">Pagination, sorting, and filtering query parameters</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A paginated list of sales</returns>
     /// <response code="200">Returns the paginated list of sales</response>
@@ -63,9 +64,11 @@ public class SalesController : BaseController
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResponse<SaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ListSales(CancellationToken cancellationToken)
+    public async Task<IActionResult> ListSales(
+        [FromQuery] SaleListQueryRequest query,
+        CancellationToken cancellationToken)
     {
-        var command = SaleListQueryParser.Parse(Request.Query);
+        var command = query.ToCommand();
 
         var validator = new ListSalesCommandValidator();
         var validationResult = await validator.ValidateAsync(command, cancellationToken);
@@ -106,7 +109,7 @@ public class SalesController : BaseController
 
         var result = await _mediator.Send(new GetSaleCommand(id), cancellationToken);
 
-        return Ok(new ApiResponseWithData<SaleResponse>
+        return OkEnvelope(new ApiResponseWithData<SaleResponse>
         {
             Success = true,
             Message = "Sale retrieved successfully",
@@ -181,7 +184,7 @@ public class SalesController : BaseController
 
         var result = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<SaleResponse>
+        return OkEnvelope(new ApiResponseWithData<SaleResponse>
         {
             Success = true,
             Message = "Sale updated successfully",
@@ -214,7 +217,7 @@ public class SalesController : BaseController
 
         await _mediator.Send(new DeleteSaleCommand(id), cancellationToken);
 
-        return Ok(new ApiResponse
+        return OkEnvelope(new ApiResponse
         {
             Success = true,
             Message = "Sale deleted successfully"
@@ -244,7 +247,7 @@ public class SalesController : BaseController
 
         var result = await _mediator.Send(new CancelSaleCommand(id), cancellationToken);
 
-        return Ok(new ApiResponseWithData<SaleResponse>
+        return OkEnvelope(new ApiResponseWithData<SaleResponse>
         {
             Success = true,
             Message = "Sale cancelled successfully",
@@ -279,7 +282,7 @@ public class SalesController : BaseController
 
         var result = await _mediator.Send(new CancelSaleItemCommand(id, itemId), cancellationToken);
 
-        return Ok(new ApiResponseWithData<SaleResponse>
+        return OkEnvelope(new ApiResponseWithData<SaleResponse>
         {
             Success = true,
             Message = "Sale item cancelled successfully",

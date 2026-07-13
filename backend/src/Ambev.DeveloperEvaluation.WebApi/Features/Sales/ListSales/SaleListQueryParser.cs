@@ -20,21 +20,21 @@ public static class SaleListQueryParser
     /// </summary>
     public static ListSalesCommand Parse(IQueryCollection query)
     {
-        var command = new ListSalesCommand();
+        var request = new SaleListQueryRequest();
 
         if (query.TryGetValue("_page", out StringValues pageValue) && int.TryParse(pageValue, out var page))
         {
-            command.Page = Math.Max(1, page);
+            request.Page = page;
         }
 
         if (query.TryGetValue("_size", out StringValues sizeValue) && int.TryParse(sizeValue, out var size))
         {
-            command.Size = Math.Clamp(size, 1, 100);
+            request.Size = size;
         }
 
         if (query.TryGetValue("_order", out StringValues orderValue))
         {
-            command.OrderBy = orderValue.ToString();
+            request.OrderBy = orderValue.ToString();
         }
 
         foreach (var parameter in query)
@@ -47,82 +47,88 @@ public static class SaleListQueryParser
                 continue;
             }
 
-            if (TryApplyRangeFilter(key, value, command))
+            if (TryApplyRangeFilter(key, value, request))
             {
                 continue;
             }
 
-            ApplyFieldFilter(key, value, command);
+            ApplyFieldFilter(key, value, request);
         }
 
-        return command;
+        return request.ToCommand();
     }
 
-    private static bool TryApplyRangeFilter(string key, string value, ListSalesCommand command)
+    private static bool TryApplyRangeFilter(string key, string value, SaleListQueryRequest request)
     {
         if (key.Equals("_minTotalAmount", StringComparison.OrdinalIgnoreCase)
             && decimal.TryParse(value, out var minTotal))
         {
-            command.MinTotalAmount = minTotal;
+            request.MinTotalAmount = minTotal;
             return true;
         }
 
         if (key.Equals("_maxTotalAmount", StringComparison.OrdinalIgnoreCase)
             && decimal.TryParse(value, out var maxTotal))
         {
-            command.MaxTotalAmount = maxTotal;
+            request.MaxTotalAmount = maxTotal;
             return true;
         }
 
         if (key.Equals("_minDate", StringComparison.OrdinalIgnoreCase)
             && DateTime.TryParse(value, out var minDate))
         {
-            command.MinSaleDate = minDate;
+            request.MinDate = minDate;
             return true;
         }
 
         if (key.Equals("_maxDate", StringComparison.OrdinalIgnoreCase)
             && DateTime.TryParse(value, out var maxDate))
         {
-            command.MaxSaleDate = maxDate;
+            request.MaxDate = maxDate;
             return true;
         }
 
         return false;
     }
 
-    private static void ApplyFieldFilter(string key, string value, ListSalesCommand command)
+    private static void ApplyFieldFilter(string key, string value, SaleListQueryRequest request)
     {
         switch (key.ToLowerInvariant())
         {
             case "cancelled":
                 if (bool.TryParse(value, out var cancelled))
                 {
-                    command.IsCancelled = cancelled;
+                    request.Cancelled = cancelled;
                 }
                 break;
 
             case "customername":
+                request.CustomerName = value;
+                break;
+
             case "customer":
-                command.CustomerName = value;
+                request.Customer = value;
                 break;
 
             case "branchname":
+                request.BranchName = value;
+                break;
+
             case "branch":
-                command.BranchName = value;
+                request.Branch = value;
                 break;
 
             case "customerid":
                 if (Guid.TryParse(value, out var customerId))
                 {
-                    command.CustomerId = customerId;
+                    request.CustomerId = customerId;
                 }
                 break;
 
             case "branchid":
                 if (Guid.TryParse(value, out var branchId))
                 {
-                    command.BranchId = branchId;
+                    request.BranchId = branchId;
                 }
                 break;
         }

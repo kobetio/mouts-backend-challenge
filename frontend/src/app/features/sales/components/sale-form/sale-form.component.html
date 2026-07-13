@@ -58,7 +58,7 @@
       </button>
     </div>
 
-    @for (itemGroup of items.controls; track $index; let i = $index) {
+    @for (itemGroup of items.controls; track trackItemRow($index, itemGroup); let i = $index) {
       <div class="item-row" [formGroupName]="i">
         <mat-form-field appearance="outline">
           <mat-label>Product ID</mat-label>
@@ -113,7 +113,7 @@
         mat-flat-button
         color="primary"
         type="submit"
-        [disabled]="submitting || hasQuantityErrors()"
+        [disabled]="submitting() || hasQuantityErrors()"
       >
         {{ submitLabel }}
       </button>

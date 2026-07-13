@@ -12,6 +12,7 @@ import {
   SaleListResult,
   UpdateSaleRequest,
 } from '../models/sale.model';
+import { mapApiSale, mapApiSaleList } from '../utils/sale-api.mapper';
 
 @Injectable({ providedIn: 'root' })
 export class SalesApiService {
@@ -23,7 +24,7 @@ export class SalesApiService {
       .get<PaginatedApiResponse<Sale>>(this.baseUrl, { params: this.buildListParams(query) })
       .pipe(
         map((response) => ({
-          items: response.data ?? [],
+          items: mapApiSaleList(response.data ?? []),
           currentPage: response.currentPage,
           totalPages: response.totalPages,
           totalItems: response.totalItems,
@@ -34,19 +35,19 @@ export class SalesApiService {
   getById(id: string): Observable<Sale> {
     return this.http
       .get<ApiResponse<Sale>>(`${this.baseUrl}/${id}`)
-      .pipe(map((response) => this.unwrapData(response)));
+      .pipe(map((response) => mapApiSale(this.unwrapData(response))));
   }
 
   create(request: CreateSaleRequest): Observable<Sale> {
     return this.http
       .post<ApiResponse<Sale>>(this.baseUrl, request)
-      .pipe(map((response) => this.unwrapData(response)));
+      .pipe(map((response) => mapApiSale(this.unwrapData(response))));
   }
 
   update(id: string, request: UpdateSaleRequest): Observable<Sale> {
     return this.http
       .put<ApiResponse<Sale>>(`${this.baseUrl}/${id}`, request)
-      .pipe(map((response) => this.unwrapData(response)));
+      .pipe(map((response) => mapApiSale(this.unwrapData(response))));
   }
 
   delete(id: string): Observable<void> {
@@ -56,21 +57,41 @@ export class SalesApiService {
   cancelSale(id: string): Observable<Sale> {
     return this.http
       .post<ApiResponse<Sale>>(`${this.baseUrl}/${id}/cancel`, {})
-      .pipe(map((response) => this.unwrapData(response)));
+      .pipe(map((response) => mapApiSale(this.unwrapData(response))));
   }
 
   cancelItem(saleId: string, itemId: string): Observable<Sale> {
     return this.http
       .post<ApiResponse<Sale>>(`${this.baseUrl}/${saleId}/items/${itemId}/cancel`, {})
-      .pipe(map((response) => this.unwrapData(response)));
+      .pipe(map((response) => mapApiSale(this.unwrapData(response))));
   }
 
   private unwrapData<T>(response: ApiResponse<T>): T {
-    if (response.data === undefined || response.data === null) {
+    let data = response.data;
+
+    if (data === undefined || data === null) {
       throw new Error('API response did not include data.');
     }
 
-    return response.data;
+    // Tolerate a legacy double-wrapped envelope: { data: { data: T, ... }, ... }
+    if (this.isNestedApiEnvelope(data)) {
+      data = data.data as T;
+    }
+
+    if (data === undefined || data === null) {
+      throw new Error('API response did not include data.');
+    }
+
+    return data;
+  }
+
+  private isNestedApiEnvelope<T>(value: T): value is T & ApiResponse<unknown> {
+    if (typeof value !== 'object' || value === null) {
+      return false;
+    }
+
+    const candidate = value as Record<string, unknown>;
+    return 'data' in candidate && 'success' in candidate;
   }
 
   private buildListParams(query: SaleListQuery): HttpParams {
