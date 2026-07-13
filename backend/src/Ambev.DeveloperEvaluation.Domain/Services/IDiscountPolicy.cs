@@ -2,7 +2,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Services;
 
 /// <summary>
 /// Resolves the discount percentage applicable to a sale item, based on the quantity of
-/// identical units of the same product being sold (see the project's business rules, §2.1).
+/// identical units of the same product being sold.
 /// </summary>
 public interface IDiscountPolicy
 {

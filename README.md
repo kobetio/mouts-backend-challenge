@@ -254,8 +254,19 @@ JWT configuration is wired (`Jwt:SecretKey`, `AddJwtAuthentication`) so a future
 - Integration and end-to-end tests against a real database
 - Message broker integration for domain events (e.g. RabbitMQ) instead of log-only publishing
 - API rate limiting and structured correlation IDs across frontend and backend
-- Upgrade AutoMapper to resolve the known NU1903 security advisory
 - Role-based authorization for sales operations
+
+---
+
+## Known limitations
+
+### AutoMapper NU1903 (GHSA-rvv3-g6hj-g44x)
+
+The backend inherits **AutoMapper 13.0.1** from the evaluation template. NuGet reports a high-severity advisory (GHSA-rvv3-g6hj-g44x) involving stack exhaustion when mapping extremely deep self-referential object graphs (~30k nesting levels).
+
+**Decision:** keep 13.0.1 and suppress the audit warning in the Application project. Patched releases (15+) require a commercial license; this challenge uses AutoMapper only for shallow DTO mapping of Sales entities (no deep or cyclic graphs from API input). The practical risk for this API surface is negligible.
+
+**Mitigation path with more time:** migrate to a maintained fork (e.g. Mapperly or a patched OSS fork), or upgrade under a valid AutoMapper license.
 
 ---
 

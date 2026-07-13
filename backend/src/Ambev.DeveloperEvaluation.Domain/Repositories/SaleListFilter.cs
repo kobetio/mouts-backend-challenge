@@ -2,7 +2,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
 /// <summary>
 /// Structured pagination/sorting/filtering parameters for <see cref="ISaleRepository.ListAsync"/>.
-/// Translating raw query-string parameters (§3.7: <c>_page</c>, <c>_size</c>, <c>_order</c>,
+/// Translating raw query-string parameters (<c>_page</c>, <c>_size</c>, <c>_order</c>,
 /// field filters) into this shape is the API layer's responsibility.
 /// </summary>
 public class SaleListFilter
@@ -22,13 +22,13 @@ public class SaleListFilter
 
     /// <summary>
     /// Filters by customer name. Supports the "*" wildcard before/after the value for
-    /// partial matches (e.g. "John*"), per §3.7.
+    /// partial matches (e.g. "John*").
     /// </summary>
     public string? CustomerName { get; set; }
 
     /// <summary>
     /// Filters by branch name. Supports the "*" wildcard before/after the value for
-    /// partial matches, per §3.7.
+    /// partial matches.
     /// </summary>
     public string? BranchName { get; set; }
 

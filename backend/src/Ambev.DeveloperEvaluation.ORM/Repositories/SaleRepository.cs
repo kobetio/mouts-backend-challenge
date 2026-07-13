@@ -183,7 +183,7 @@ public class SaleRepository : ISaleRepository
     }
 
     /// <summary>
-    /// Translates the "*" wildcard convention (§3.7) into a SQL ILIKE pattern ("%"). A value
+    /// Translates the "*" wildcard convention into a SQL ILIKE pattern ("%"). A value
     /// with no wildcard is treated as an exact (case-insensitive) match.
     /// </summary>
     private static string ToLikePattern(string value) => value.Contains('*') ? value.Replace('*', '%') : value;

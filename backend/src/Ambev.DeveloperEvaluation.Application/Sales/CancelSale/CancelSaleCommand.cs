@@ -3,7 +3,7 @@ using MediatR;
 namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 
 /// <summary>
-/// Command for cancelling an entire sale. Per the project's business rules (§2.3), cancellation
+/// Command for cancelling an entire sale. Cancellation preserves history: the sale remains
 /// preserves history: the sale remains queryable, but is excluded from active totals/reports.
 /// </summary>
 public record CancelSaleCommand : IRequest<SaleResult>

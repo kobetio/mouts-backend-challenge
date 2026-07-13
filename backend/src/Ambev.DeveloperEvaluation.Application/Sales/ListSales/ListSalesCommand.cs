@@ -36,13 +36,13 @@ public class ListSalesCommand : IRequest<ListSalesResult>
 
     /// <summary>
     /// Filters results by customer name. Supports the "*" wildcard before/after the value
-    /// for partial matches (e.g. "John*"), per §3.7.
+    /// for partial matches (e.g. "John*").
     /// </summary>
     public string? CustomerName { get; set; }
 
     /// <summary>
     /// Filters results by branch name. Supports the "*" wildcard before/after the value
-    /// for partial matches, per §3.7.
+    /// for partial matches.
     /// </summary>
     public string? BranchName { get; set; }
 

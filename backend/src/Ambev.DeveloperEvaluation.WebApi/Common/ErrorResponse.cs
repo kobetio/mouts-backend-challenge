@@ -1,8 +1,7 @@
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
 
 /// <summary>
-/// Standard error envelope required by the project's error-handling conventions (§3.8): every
-/// 4xx/5xx response body has exactly these three fields.
+/// Standard error envelope for every 4xx/5xx response: the body has exactly these three fields.
 /// </summary>
 public class ErrorResponse
 {
